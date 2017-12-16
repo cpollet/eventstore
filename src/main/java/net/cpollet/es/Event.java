@@ -2,11 +2,13 @@ package net.cpollet.es;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.util.Map;
 
 @AllArgsConstructor
 @Getter
+@ToString
 public class Event {
     private final String id;
 
