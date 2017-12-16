@@ -46,7 +46,7 @@ public class Main {
 
     private static DataSource dataSource() throws IOException {
         Properties properties = new Properties();
-        InputStream in = TestMySqlEventStore.class.getClassLoader().getResourceAsStream("datasource.properties");
+        InputStream in = Main.class.getClassLoader().getResourceAsStream("datasource.properties");
         properties.load(in);
         in.close();
 
