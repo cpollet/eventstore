@@ -1,6 +1,5 @@
 package net.cpollet.es;
 
-import com.sun.xml.internal.bind.v2.runtime.reflect.Lister;
 import net.cpollet.es.data.GsonSerializer;
 import net.cpollet.es.database.MySqlEventStore;
 import net.cpollet.es.database.TestMySqlEventStore;
