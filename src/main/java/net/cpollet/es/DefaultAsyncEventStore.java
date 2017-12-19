@@ -1,6 +1,7 @@
 package net.cpollet.es;
 
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
@@ -14,18 +15,18 @@ public class DefaultAsyncEventStore implements AsyncEventStore {
     }
 
     @Override
-    public Future<StorageResult> store(String aggregateId, Object payload) {
+    public CompletableFuture<StorageResult> store(String aggregateId, Object payload) {
         return store(aggregateId, payload, null);
     }
 
     @Override
-    public Future<StorageResult> store(String aggregateId, Object payload, Map<String, String> metadata) {
-        return executorService.submit(() -> {
+    public CompletableFuture<StorageResult> store(String aggregateId, Object payload, Map<String, String> metadata) {
+        return CompletableFuture.supplyAsync(() -> {
             try {
                 return StorageResult.success(eventStore.store(aggregateId, payload, metadata));
             } catch (Exception e) {
                 return StorageResult.failure(e);
             }
-        });
+        }, executorService);
     }
 }

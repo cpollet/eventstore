@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -29,19 +30,28 @@ public class Main {
                         ),
                         (Listener) event -> {
                             System.out.println("listener: " + event);
-                            executor.shutdown();
                         }
                 ),
                 executor
         );
 
         for (int i = 0; i < 100; i++) {
-            store.store("aggregateId-" + i, "payload");
+            store.store("aggregateId-" + i, "payload").thenAccept(r -> System.out.println("then: " + r.getEvent()));
         }
 
-        Future<StorageResult> future = store.store("aggregateId-0", "payload");
+        CompletableFuture<StorageResult> future = store.store("aggregateId-0", "payload");
 
-        System.out.println("future: " + future.get(2L, TimeUnit.SECONDS).getEvent());
+        while (!future.isDone()) {
+            System.out.println("waiting for aggregateId-0 to finish");
+            Thread.sleep(10L);
+        }
+
+        System.out.println("future: " + future.get().getEvent());
+
+        while (executor.getActiveCount() > 0) {
+            Thread.sleep(1000L);
+        }
+        executor.shutdown();
     }
 
     private static DataSource dataSource() throws IOException {
