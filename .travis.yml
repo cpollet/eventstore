@@ -23,7 +23,6 @@ addons:
 
 script:
   - mvn org.jacoco:jacoco-maven-plugin:prepare-agent package sonar:sonar
-  - sonar-scanner -Dsonar.projectKey=net.cpollet.es:es -Dsonar.projectName=es -Dsonar.projectVersion=1.0 -Dsonar.sources=src
 
 branches:
   only:
