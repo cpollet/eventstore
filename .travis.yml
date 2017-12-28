@@ -6,7 +6,7 @@ install:
 before_script:
   - mysql -uroot -e 'SET GLOBAL TRANSACTION ISOLATION LEVEL READ COMMITTED'
   - mysql -e 'show variables;'
-  - cat test-schema.sql | mysql
+  - cat test-schema.sql | mysql -uroot
 
 script:
   - mvn clean test
