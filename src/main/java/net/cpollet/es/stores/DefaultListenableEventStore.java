@@ -1,4 +1,10 @@
-package net.cpollet.es;
+package net.cpollet.es.stores;
+
+import net.cpollet.es.Event;
+import net.cpollet.es.EventNotStoredException;
+import net.cpollet.es.EventStore;
+import net.cpollet.es.ListenableEventStore;
+import net.cpollet.es.Listener;
 
 import java.util.ArrayList;
 import java.util.Arrays;

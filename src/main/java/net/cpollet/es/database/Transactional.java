@@ -6,12 +6,12 @@ public abstract class Transactional<T> {
     private final Connection connection;
     private final int isolationLevel;
 
-    Transactional(Connection connection, int isolationLevel) {
+    public Transactional(Connection connection, int isolationLevel) {
         this.connection = connection;
         this.isolationLevel = isolationLevel;
     }
 
-    T executeInTransaction() throws Exception {
+    public T executeInTransaction() throws Exception {
         try {
             connection.setAutoCommit(false);
             connection.setTransactionIsolation(isolationLevel);

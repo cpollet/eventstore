@@ -1,8 +1,10 @@
-package net.cpollet.es.database;
+package net.cpollet.es.stores;
 
 import com.google.common.truth.Truth;
 import net.cpollet.es.data.GsonSerializer;
 import net.cpollet.es.data.Serializer;
+import net.cpollet.es.database.ConnectionFactory;
+import net.cpollet.es.database.DefaultConnectionFactory;
 import net.cpollet.es.utils.ClassUtils;
 import net.cpollet.es.Event;
 import net.cpollet.es.EventNotStoredException;
@@ -31,13 +33,13 @@ public class TestMySqlEventStore {
         eventStore = new MySqlEventStore(connectionPool(), serializer);
     }
 
-    private static ConnectionPool connectionPool() throws IOException {
+    private static ConnectionFactory connectionPool() throws IOException {
         Properties properties = new Properties();
         InputStream in = TestMySqlEventStore.class.getClassLoader().getResourceAsStream("datasource.properties");
         properties.load(in);
         in.close();
 
-        return new TomcatConnectionPool(
+        return new DefaultConnectionFactory(
                 new DataSource(
                         DataSourceFactory.parsePoolProperties(properties)
                 )

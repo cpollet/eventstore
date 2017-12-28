@@ -1,4 +1,4 @@
-package net.cpollet.es.stores;
+package net.cpollet.es.stores.fakes;
 
 import net.cpollet.es.Event;
 import net.cpollet.es.EventNotStoredException;

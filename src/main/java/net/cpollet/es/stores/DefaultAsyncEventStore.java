@@ -1,4 +1,8 @@
-package net.cpollet.es;
+package net.cpollet.es.stores;
+
+import net.cpollet.es.AsyncEventStore;
+import net.cpollet.es.EventStore;
+import net.cpollet.es.StorageResult;
 
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;

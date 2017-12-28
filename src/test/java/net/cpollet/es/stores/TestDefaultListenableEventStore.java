@@ -1,8 +1,11 @@
-package net.cpollet.es;
+package net.cpollet.es.stores;
 
 import com.google.common.truth.Truth;
-import net.cpollet.es.stores.FailingEventStore;
-import net.cpollet.es.stores.SucceedingEventStore;
+import net.cpollet.es.Event;
+import net.cpollet.es.EventNotStoredException;
+import net.cpollet.es.Listener;
+import net.cpollet.es.stores.fakes.FailingEventStore;
+import net.cpollet.es.stores.fakes.SucceedingEventStore;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

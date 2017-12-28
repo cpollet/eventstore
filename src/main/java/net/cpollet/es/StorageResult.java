@@ -10,11 +10,11 @@ public class StorageResult {
     private final Event event;
     private final Exception exception;
 
-    static StorageResult success(Event event) {
+    public static StorageResult success(Event event) {
         return new StorageResult(event, null);
     }
 
-    static StorageResult failure(Exception exception) {
+    public static StorageResult failure(Exception exception) {
         return new StorageResult(null, exception);
     }
 

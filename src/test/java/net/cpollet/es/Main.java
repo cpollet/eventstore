@@ -1,9 +1,10 @@
 package net.cpollet.es;
 
 import net.cpollet.es.data.GsonSerializer;
-import net.cpollet.es.database.MySqlEventStore;
-import net.cpollet.es.database.TestMySqlEventStore;
-import net.cpollet.es.database.TomcatConnectionPool;
+import net.cpollet.es.stores.DefaultAsyncEventStore;
+import net.cpollet.es.stores.DefaultListenableEventStore;
+import net.cpollet.es.stores.MySqlEventStore;
+import net.cpollet.es.database.DefaultConnectionFactory;
 import org.apache.tomcat.jdbc.pool.DataSource;
 import org.apache.tomcat.jdbc.pool.DataSourceFactory;
 
@@ -13,7 +14,6 @@ import java.util.Properties;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -25,7 +25,7 @@ public class Main {
         AsyncEventStore store = new DefaultAsyncEventStore(
                 new DefaultListenableEventStore(
                         new MySqlEventStore(
-                                new TomcatConnectionPool(dataSource()),
+                                new DefaultConnectionFactory(dataSource()),
                                 new GsonSerializer()
                         ),
                         (Listener) event -> {

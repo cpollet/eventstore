@@ -1,3 +1,7 @@
+DROP DATABASE IF EXISTS net_cpollet_es;
+CREATE DATABASE net_cpollet_es;
+USE net_cpollet_es;
+
 CREATE TABLE events
 (
     id CHAR(36) NOT NULL,
