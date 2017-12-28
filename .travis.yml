@@ -1,0 +1,16 @@
+language: java
+
+install:
+  - mvn install -U -DskipTests=true
+
+before_script:
+  - mysql -uroot -e 'SET GLOBAL TRANSACTION ISOLATION LEVEL READ COMMITTED'
+  - mysql -e 'show variables;'
+  - cat test-schema.sql | mysql -e
+
+script:
+  - mvn clean test
+
+branches:
+  only:
+    - master
