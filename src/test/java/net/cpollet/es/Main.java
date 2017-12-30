@@ -37,15 +37,16 @@ public class Main {
         );
 
         for (int i = 0; i < 100; i++) {
-            store.store("aggregateId-" + i, "payload").thenAccept(r -> System.out.println("[then    ] " + r.getEvent()));
+            store.storeAsync("aggregateId-" + i, "payload")
+                    .thenAccept(r -> System.out.println("[then    ] " + r));
         }
 
-        CompletableFuture<StorageResult> future = store.store("aggregateId-0", "payload");
+        CompletableFuture<Event> future = store.storeAsync("aggregateId-0", "payload");
 
         System.out.println("[waiting ] For aggregateId-0 to finish");
         Awaitility.await().until(future::isDone);
 
-        System.out.println("[future  ] " + future.get().getEvent());
+        System.out.println("[future  ] " + future.get());
 
         System.out.println("[waiting ] All executors to be done");
         Awaitility.await().until(() -> executor.getActiveCount() == 0);
