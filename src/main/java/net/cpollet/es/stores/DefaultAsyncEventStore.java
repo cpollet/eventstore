@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.ThreadPoolExecutor;
 
 public class DefaultAsyncEventStore implements AsyncEventStore {
     private final EventStore eventStore;
@@ -35,7 +34,7 @@ public class DefaultAsyncEventStore implements AsyncEventStore {
         executorService.submit((Runnable & CompletableFuture.AsynchronousCompletionTask) () -> {
             try {
                 completableFuture.complete(eventStore.store(aggregateId, payload, metadata));
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 completableFuture.completeExceptionally(e);
             }
         });
