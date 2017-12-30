@@ -24,6 +24,7 @@ public class DefaultAsyncEventStore implements AsyncEventStore {
 
     @Override
     public CompletableFuture<StorageResult> store(String aggregateId, Object payload, Map<String, String> metadata) {
+        // FIXME this should work the standard way (ie. use CompletableFuture#isCompletedExceptionally)
         return CompletableFuture.supplyAsync(() -> {
             try {
                 return StorageResult.success(eventStore.store(aggregateId, payload, metadata));
