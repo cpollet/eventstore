@@ -7,6 +7,7 @@ import net.cpollet.es.stores.MySqlEventStore;
 import net.cpollet.es.database.DefaultConnectionFactory;
 import org.apache.tomcat.jdbc.pool.DataSource;
 import org.apache.tomcat.jdbc.pool.DataSourceFactory;
+import org.awaitility.Awaitility;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,28 +30,26 @@ public class Main {
                                 new GsonSerializer()
                         ),
                         (Listener) event -> {
-                            System.out.println("listener: " + event);
+                            System.out.println("[listener] " + event);
                         }
                 ),
                 executor
         );
 
         for (int i = 0; i < 100; i++) {
-            store.store("aggregateId-" + i, "payload").thenAccept(r -> System.out.println("then: " + r.getEvent()));
+            store.store("aggregateId-" + i, "payload").thenAccept(r -> System.out.println("[then    ] " + r.getEvent()));
         }
 
         CompletableFuture<StorageResult> future = store.store("aggregateId-0", "payload");
 
-        while (!future.isDone()) {
-            System.out.println("waiting for aggregateId-0 to finish");
-            Thread.sleep(10L);
-        }
+        System.out.println("[waiting ] For aggregateId-0 to finish");
+        Awaitility.await().until(future::isDone);
 
-        System.out.println("future: " + future.get().getEvent());
+        System.out.println("[future  ] " + future.get().getEvent());
 
-        while (executor.getActiveCount() > 0) {
-            Thread.sleep(1000L);
-        }
+        System.out.println("[waiting ] All executors to be done");
+        Awaitility.await().until(() -> executor.getActiveCount() == 0);
+
         executor.shutdown();
     }
 

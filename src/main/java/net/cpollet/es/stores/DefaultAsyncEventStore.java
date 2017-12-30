@@ -7,7 +7,6 @@ import net.cpollet.es.StorageResult;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 
 public class DefaultAsyncEventStore implements AsyncEventStore {
     private final EventStore eventStore;

@@ -1,12 +1,12 @@
 package net.cpollet.es.stores;
 
 import net.cpollet.es.Event;
+import net.cpollet.es.EventNotStoredException;
 import net.cpollet.es.EventStore;
 import net.cpollet.es.data.Serializer;
 import net.cpollet.es.database.ConnectionFactory;
 import net.cpollet.es.database.Transactional;
 import net.cpollet.es.utils.ClassUtils;
-import net.cpollet.es.EventNotStoredException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -18,8 +18,8 @@ import java.util.UUID;
 
 
 public class MySqlEventStore implements EventStore {
-    private static final String INSERT_QUERY = "insert into events (id, type, aggregate_id, metadata, payload) values (?, ?, ?, ?, ?)";
-    private static final String SELECT_QUERY = "select id, type, timestamp, version, aggregate_id, metadata, payload from events where id = ?";
+    private static final String INSERT_QUERY = "INSERT INTO events (id, type, aggregate_id, metadata, payload) VALUES (?, ?, ?, ?, ?)";
+    private static final String SELECT_QUERY = "SELECT id, type, timestamp, version, aggregate_id, metadata, payload FROM events WHERE id = ?";
 
     private final ConnectionFactory connectionFactory;
     private final Serializer serializer;
@@ -75,25 +75,28 @@ public class MySqlEventStore implements EventStore {
     private Event fetch(Connection c, String eventId) throws EventNotStoredException {
         try (PreparedStatement stmt = c.prepareStatement(SELECT_QUERY)) {
             stmt.setString(1, eventId);
-
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (!rs.next()) {
-                    throw new EventNotStoredException();
-                }
-
-                String id = rs.getString(1);
-                String type = rs.getString(2);
-                long timestamp = rs.getTimestamp(3).getTime();
-                long version = rs.getLong(4);
-                String aggregateId = rs.getString(5);
-                Map<String, String> metadata = serializer.deserialize(rs.getString(6), HashMap.class.getName());
-                Object payload = serializer.deserialize(rs.getString(7), type);
-
-                return new Event(id, type, timestamp, version, aggregateId, metadata, payload);
-            } catch (ClassNotFoundException e) {
-                throw new EventNotStoredException(e);
-            }
+            return execute(stmt);
         } catch (SQLException e) {
+            throw new EventNotStoredException(e);
+        }
+    }
+
+    private Event execute(PreparedStatement stmt) throws EventNotStoredException {
+        try (ResultSet rs = stmt.executeQuery()) {
+            if (!rs.next()) {
+                throw new EventNotStoredException();
+            }
+
+            String id = rs.getString(1);
+            String type = rs.getString(2);
+            long timestamp = rs.getTimestamp(3).getTime();
+            long version = rs.getLong(4);
+            String aggregateId = rs.getString(5);
+            Map<String, String> metadata = serializer.deserialize(rs.getString(6), HashMap.class.getName());
+            Object payload = serializer.deserialize(rs.getString(7), type);
+
+            return new Event(id, type, timestamp, version, aggregateId, metadata, payload);
+        } catch (ClassNotFoundException | SQLException e) {
             throw new EventNotStoredException(e);
         }
     }
